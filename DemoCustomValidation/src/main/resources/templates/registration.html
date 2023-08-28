@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký người dùng</title>
+</head>
+<body>
+<h1>Đăng ký người dùng</h1>
+<form th:action="@{/register}" th:object="${user}" method="post">
+    <label for="username">Tên đăng nhập:</label>
+    <input type="text" id="username" name="username" th:field="*{username}" required>
+    <br>
+    <label for="password">Mật khẩu:</label>
+    <input type="password" id="password" name="password" th:field="*{password}" required>
+    <br>
+    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Mật khẩu không đủ mạnh</span>
+    <br>
+    <input type="submit" value="Đăng ký">
+</form>
+</body>
+</html>
