@@ -17,6 +17,4 @@ public class TaskEditRequest {
 
     private String type;
 
-    private String status;
-
 }

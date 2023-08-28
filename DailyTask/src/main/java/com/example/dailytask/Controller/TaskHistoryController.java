@@ -1,6 +1,9 @@
 package com.example.dailytask.Controller;
 import com.example.dailytask.Domain.Enumration.TaskStatus;
 import com.example.dailytask.Domain.Enumration.TaskType;
+import com.example.dailytask.Domain.Task;
+import com.example.dailytask.Domain.TaskHistory;
+import com.example.dailytask.Service.Task.Request.TaskEditRequest;
 import com.example.dailytask.Service.Task.Request.TaskSaveRequest;
 import com.example.dailytask.Service.Task.TaskHistoryService;
 import com.example.dailytask.Service.Task.TaskService;
@@ -24,14 +27,14 @@ public class TaskHistoryController {
         view.addObject("message", message);
         return view;
     }
-    @GetMapping("/create")
-    public ModelAndView showCreate() {
-        ModelAndView view = new ModelAndView("task/create");
-        view.addObject("task", new TaskSaveRequest());
-        view.addObject("taskTypes", TaskType.values());
-        view.addObject("taskStatuses", TaskStatus.values());
-        return view;
-    }
+//    @GetMapping("/create")
+//    public ModelAndView showCreate() {
+//        ModelAndView view = new ModelAndView("task/create");
+//        view.addObject("task", new TaskSaveRequest());
+//        view.addObject("taskTypes", TaskType.values());
+//        view.addObject("taskStatuses", TaskStatus.values());
+//        return view;
+//    }
 
     @PostMapping("/create")
     public ModelAndView showCreate(@ModelAttribute TaskSaveRequest task) {
@@ -49,5 +52,36 @@ public class TaskHistoryController {
         return "redirect:/history?message=Change Success";
     }
 
+    @GetMapping("delete")
+    public String delete(@RequestParam("id") Long id){
+        taskHistoryService.deleteByID(id);
+        return "redirect:/history?message=Deleted";
+    }
+
+    @GetMapping("/edit")
+    public ModelAndView showEdit(@RequestParam("id") Long id){
+        ModelAndView view = new ModelAndView("/task/edit");
+        view.addObject("task", taskHistoryService.showEditById(id));
+        view.addObject("taskTypes", TaskType.values());
+        return view;
+    }
+
+    @PostMapping("/edit/{id}")
+    public ModelAndView editTask(@ModelAttribute TaskEditRequest task, @PathVariable Long id){
+        ModelAndView view = new ModelAndView("/task/edit");
+        try{
+            taskHistoryService.edit(task, id);
+            view.setViewName("redirect:/history");
+        }catch (Exception e){
+            view.setViewName("/task/edit");
+            view.addObject("task", task);
+            view.addObject("taskTypes", TaskType.values());
+            view.addObject("errorMessage", "An error occurred while editing the task.");
+            return view;
+        }
+        view.addObject("task", task);
+        view.addObject("taskTypes", TaskType.values());
+        return new ModelAndView("redirect:/history");
+    }
 
 }
