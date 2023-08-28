@@ -19,6 +19,7 @@ public class TaskController {
     @GetMapping
     public ModelAndView showListTasks() {
         ModelAndView view = new ModelAndView("task/index");
+        view.addObject("taskTypes", TaskType.values());
         view.addObject("tasks", taskService.getTasks());
         return view;
     }
@@ -76,10 +77,22 @@ public class TaskController {
 //        taskService.delete(task.getId());
 //        return "redirect:/task";
 //    }
-    @GetMapping("delete/{id}")
-    public String delete(@PathVariable Long id){
+//    @GetMapping("delete/{id}")
+//    public String delete(@PathVariable Long id){
+//        taskService.deleteById(id);
+//        return "redirect:/task?message=Deleted";
+//    }
+
+    @GetMapping("/delete")
+    public ModelAndView delete(@RequestParam("id") Long id){
+        taskService.findByID(id);
         taskService.deleteById(id);
-        return "redirect:/task?message=Deleted";
+        ModelAndView view = new ModelAndView("task/index");
+        view.addObject("taskTypes", TaskType.values());
+        view.addObject("message", "Deleted successfully");
+        view.addObject("tasks", taskService.getTasks());
+        return view;
     }
+
 
 }

@@ -8,18 +8,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 
 @Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "task")
-//@Where(clause = "deleted = 0")
-//@SQLDelete(sql= "UPDATE task SET `deleted` = 1 WHERE (`id` = ?); ")
+@Where(clause = "deleted = 0")
+@SQLDelete(sql = "UPDATE task SET `deleted` = 1 WHERE (`id` = ?);")
 
 public class Task {
 
@@ -35,6 +37,10 @@ public class Task {
 
     private LocalTime end;
 
+    private boolean deleted = false;
+
+    private LocalDate renewalDate = LocalDate.now().plusDays(1);
+
 //    private boolean deleted = false;
 
 //    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
@@ -44,6 +50,6 @@ public class Task {
 //    @OneToMany(mappedBy = "task")
 //    private Set<Task> tasks;
 
-    @OneToMany(mappedBy = "task") // task ở đây được lấy name field task của TaskHistory
-    private Set<TaskHistory> taskHistories;
+//    @OneToMany(mappedBy = "task") // task ở đây được lấy name field task của TaskHistory
+//    private Set<TaskHistory> taskHistories;
 }

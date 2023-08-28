@@ -35,7 +35,8 @@
             <td th:text="${task.type}"></td>
             <td>
                 <a class="btn btn-primary btn-sm" th:href="@{/task/edit(id=${task.getId()})}">Edit</a>
-                <a class="btn btn-danger btn-sm" th:href="@{/task/delete(id=${task.getId()})}">Delete</a>
+                <a onclick="return confirm('Are you sure you want to delete this task?')"
+                   class="btn btn-danger btn-sm" th:href="@{/task/delete(id=${task.getId()})}">Delete</a>
             </td>
         </tr>
         </tbody>
@@ -46,6 +47,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <th:block th:insert="~{layout.html :: myScript}"></th:block>
+<script>
+    window.onload = function () {
+        document.getElementById("taskPage").classList.add("active");
+    };
 
+</script>
 </body>
 </html>

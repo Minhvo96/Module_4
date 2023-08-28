@@ -4,6 +4,7 @@ import com.example.dailytask.Domain.Enumration.TaskType;
 import com.example.dailytask.Domain.Task;
 import com.example.dailytask.Domain.TaskHistory;
 import com.example.dailytask.Exception.ResourceNotFoundException;
+import com.example.dailytask.Exception.TaskNotFoundException;
 import com.example.dailytask.Repository.TaskHistoryRepository;
 import com.example.dailytask.Repository.TaskRepository;
 import com.example.dailytask.Service.Task.Request.TaskSaveRequest;
@@ -28,12 +29,11 @@ public class TaskService {
     private final TaskHistoryRepository taskHistoryRepository;
 
     public List<TaskListResponse> getTasks() {
-        return taskHistoryRepository.findAllTaskToDay()
+        return taskRepository.findAll()
                 .stream()
                 .map(e -> AppUtil.mapper.map(e, TaskListResponse.class))
                 .collect(Collectors.toList());
     }
-
 //    public void create(TaskSaveRequest request){
 //        var task = AppUtil.mapper.map(request, Task.class);
 //        taskRepository.save(task);
@@ -65,26 +65,36 @@ public class TaskService {
                         String.format(AppMessage.ID_NOT_FOUND, "Task", id)));
     }
 
-    public void updateTaskStatus(Long id, TaskStatus status) {
-        TaskHistory taskHistory = taskHistoryService.getTaskHistoryById(id);
-        if (taskHistory != null) {
-            taskHistory.setStatus(status);
-            taskHistoryService.save(taskHistory);
-
-        }
-    }
-    public void createTaskHistory(Task task, TaskStatus oldStatus, TaskStatus newStatus) {
-        TaskHistory taskHistory = new TaskHistory();
-        taskHistory.setTask(task);
-        taskHistory.setStatus(oldStatus);
-        taskHistory.setStatus(newStatus);
-        taskHistory.setType(TaskType.DAILY);
-        taskHistoryService.save(taskHistory);
+    public Task findByID(Long id){
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException
+                        (String.format(AppMessage.ID_NOT_FOUND, "Task", id)));
     }
 
-    public void deleteById(Long id){
-        Task task = findByID(id);
-        taskRepository.delete(task);
+//    public void updateTaskStatus(Long id, TaskStatus status) {
+//        TaskHistory taskHistory = taskHistoryService.getTaskHistoryById(id);
+//        if (taskHistory != null) {
+//            taskHistory.setStatus(status);
+//            taskHistoryService.save(taskHistory);
+//
+//        }
+//    }
+//    public void createTaskHistory(Task task, TaskStatus oldStatus, TaskStatus newStatus) {
+//        TaskHistory taskHistory = new TaskHistory();
+//        taskHistory.setTask(task);
+//        taskHistory.setStatus(oldStatus);
+//        taskHistory.setStatus(newStatus);
+//        taskHistory.setType(TaskType.DAILY);
+//        taskHistoryService.save(taskHistory);
+//    }
+
+//    public void deleteById(Long id){
+//        Task task = findByID(id);
+//        taskRepository.delete(task);
+//    }
+
+    public void deleteById(Long id) {
+        taskRepository.deleteById(id);
     }
 
 //    public void delete(Long taskId) {
@@ -95,11 +105,7 @@ public class TaskService {
 //        return taskRepository.findById(id).orElse(null);
 //    }
 
-    public Task findByID(Long id){
-        return taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException
-                        (String.format(AppMessage.ID_NOT_FOUND, "Task", id)));
-    }
+
 
     public Task updateTask(Long taskId, Task updatedTask) {
         Optional<Task> taskOptional = taskRepository.findById(taskId);
