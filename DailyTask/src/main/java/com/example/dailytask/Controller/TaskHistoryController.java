@@ -1,16 +1,24 @@
 package com.example.dailytask.Controller;
+import ch.qos.logback.core.model.Model;
 import com.example.dailytask.Domain.Enumration.TaskStatus;
 import com.example.dailytask.Domain.Enumration.TaskType;
-import com.example.dailytask.Domain.Task;
 import com.example.dailytask.Domain.TaskHistory;
+import com.example.dailytask.Repository.TaskHistoryRepository;
 import com.example.dailytask.Service.Task.Request.TaskEditRequest;
 import com.example.dailytask.Service.Task.Request.TaskSaveRequest;
+import com.example.dailytask.Service.Task.Response.TaskListResponse;
 import com.example.dailytask.Service.Task.TaskHistoryService;
 import com.example.dailytask.Service.Task.TaskService;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/history")
@@ -18,6 +26,21 @@ import org.springframework.web.servlet.ModelAndView;
 public class TaskHistoryController {
     private final TaskHistoryService taskHistoryService;
     private final TaskService taskService;
+
+    private final TaskHistoryRepository taskHistoryRepository;
+
+    @GetMapping("/search")
+    public ModelAndView searchTasks(@RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        List<TaskListResponse> tasks = taskHistoryService.findByStartBetween(startDate.atStartOfDay(), endDate.atStartOfDay());
+        ModelAndView view = new ModelAndView("task/history");
+        view.addObject("historytasks", tasks);
+        view.addObject("statuses", TaskStatus.values());
+        view.addObject("message", "Found " + tasks.size() + " tasks!");
+        return view;
+    }
+
 
     @GetMapping
     public ModelAndView showHistoryTasks(@RequestParam(required = false) String message) {

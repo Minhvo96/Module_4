@@ -34,10 +34,6 @@ public class TaskService {
                 .map(e -> AppUtil.mapper.map(e, TaskListResponse.class))
                 .collect(Collectors.toList());
     }
-//    public void create(TaskSaveRequest request){
-//        var task = AppUtil.mapper.map(request, Task.class);
-//        taskRepository.save(task);
-//    }
 
     public void create(TaskSaveRequest request){
         var taskHistory = AppUtil.mapper.map(request, TaskHistory.class);
@@ -71,41 +67,9 @@ public class TaskService {
                         (String.format(AppMessage.ID_NOT_FOUND, "Task", id)));
     }
 
-//    public void updateTaskStatus(Long id, TaskStatus status) {
-//        TaskHistory taskHistory = taskHistoryService.getTaskHistoryById(id);
-//        if (taskHistory != null) {
-//            taskHistory.setStatus(status);
-//            taskHistoryService.save(taskHistory);
-//
-//        }
-//    }
-//    public void createTaskHistory(Task task, TaskStatus oldStatus, TaskStatus newStatus) {
-//        TaskHistory taskHistory = new TaskHistory();
-//        taskHistory.setTask(task);
-//        taskHistory.setStatus(oldStatus);
-//        taskHistory.setStatus(newStatus);
-//        taskHistory.setType(TaskType.DAILY);
-//        taskHistoryService.save(taskHistory);
-//    }
-
-//    public void deleteById(Long id){
-//        Task task = findByID(id);
-//        taskRepository.delete(task);
-//    }
-
     public void deleteById(Long id) {
         taskRepository.deleteById(id);
     }
-
-//    public void delete(Long taskId) {
-//        taskRepository.deleteById(taskId);
-//    }
-
-//    public Task findByID(Long id) {
-//        return taskRepository.findById(id).orElse(null);
-//    }
-
-
 
     public Task updateTask(Long taskId, Task updatedTask) {
         Optional<Task> taskOptional = taskRepository.findById(taskId);

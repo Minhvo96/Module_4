@@ -25,7 +25,7 @@ public class TaskHistoryService {
     private TaskHistoryRepository taskHistoryRepository;
 
     public List<TaskListResponse> getHistoryTasks() {
-        return taskHistoryRepository.findAll()
+        return taskHistoryRepository.findAllTaskToday()
                 .stream()
                 .map(e -> AppUtil.mapper.map(e, TaskListResponse.class))
                 .collect(Collectors.toList());
@@ -77,4 +77,11 @@ public class TaskHistoryService {
     }
 
 
+    public List<TaskListResponse> findByStartBetween(LocalDateTime startDate, LocalDateTime endDate) {
+      return  taskHistoryRepository.findByStartBetween(startDate, endDate)
+              .stream()
+              .map(e -> AppUtil.mapper.map(e, TaskListResponse.class))
+              .collect(Collectors.toList());
+
+    }
 }

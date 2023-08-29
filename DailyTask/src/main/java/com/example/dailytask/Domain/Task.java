@@ -39,6 +39,9 @@ public class Task {
 
     private boolean deleted = false;
 
+    @Enumerated(value = EnumType.STRING)
+    private TaskType type;
+
     private LocalDate renewalDate = LocalDate.now().plusDays(1);
 
 //    private boolean deleted = false;
