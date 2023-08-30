@@ -2,6 +2,7 @@ package com.example.dailytask.Controller;
 import com.example.dailytask.Domain.Enumration.TaskStatus;
 import com.example.dailytask.Domain.Enumration.TaskType;
 import com.example.dailytask.Domain.Task;
+import com.example.dailytask.Service.Task.Request.TaskEditRequest;
 import com.example.dailytask.Service.Task.Request.TaskSaveRequest;
 import com.example.dailytask.Service.Task.TaskHistoryService;
 import com.example.dailytask.Service.Task.TaskService;
@@ -82,6 +83,31 @@ public class TaskController {
 //        taskService.deleteById(id);
 //        return "redirect:/task?message=Deleted";
 //    }
+@GetMapping("/edit")
+public ModelAndView showEdit(@RequestParam("id") Long id){
+    ModelAndView view = new ModelAndView("/task/editTask");
+    view.addObject("task", taskService.showEditById(id));
+    view.addObject("taskTypes", TaskType.values());
+    return view;
+}
+    @PostMapping("/edit/{id}")
+    public ModelAndView editTask(@ModelAttribute TaskEditRequest task, @PathVariable Long id){
+        ModelAndView view = new ModelAndView("/task/editTask");
+        try{
+            taskService.edit(task, id);
+            view.setViewName("redirect:/task");
+        }catch (Exception e){
+            view.setViewName("/task/editTask");
+            view.addObject("task", task);
+            view.addObject("taskTypes", TaskType.values());
+            view.addObject("errorMessage", "An error occurred while editing the task.");
+            return view;
+        }
+        view.addObject("task", task);
+        view.addObject("taskTypes", TaskType.values());
+        return new ModelAndView("redirect:/task");
+    }
+
 
     @GetMapping("/delete")
     public ModelAndView delete(@RequestParam("id") Long id){

@@ -1,6 +1,7 @@
 package com.example.dailytask.Service.Task;
 import com.example.dailytask.Domain.Enumration.TaskStatus;
 import com.example.dailytask.Domain.Enumration.TaskType;
+import com.example.dailytask.Domain.Task;
 import com.example.dailytask.Domain.TaskHistory;
 import com.example.dailytask.Exception.ResourceNotFoundException;
 import com.example.dailytask.Repository.TaskHistoryRepository;
@@ -13,8 +14,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,4 +89,64 @@ public class TaskHistoryService {
               .collect(Collectors.toList());
 
     }
+
+    public Map<TaskStatus, Long> countTasksByStatus() {
+        Map<TaskStatus, Long> taskCounts = new HashMap<>();
+
+        for (TaskStatus status : TaskStatus.values()) {
+            List<TaskHistory> taskHistories = taskHistoryRepository.findByStatus(status);
+            long count = taskHistories.size();
+            taskCounts.put(status, count);
+        }
+
+        return taskCounts;
+    }
+
+    public Map<String, Long> countTasksByWeek() {
+        Map<String, Long> taskCountsByWeek = new HashMap<>();
+
+        // Lấy danh sách tất cả task
+        List<TaskHistory> taskHistories = taskHistoryRepository.findAll();
+
+        // Vòng lặp qua từng task và đếm theo tuần
+        for (TaskHistory taskHistory : taskHistories) {
+            LocalDateTime start = taskHistory.getStart();
+            if (start != null) {
+                String week = start.format(DateTimeFormatter.ofPattern("ww-yyyy"));
+
+                // Kiểm tra xem tuần đã tồn tại trong map chưa, nếu chưa thì thêm vào
+                taskCountsByWeek.putIfAbsent(week, 0L);
+
+                // Tăng giá trị đếm của tuần đó lên 1
+                taskCountsByWeek.put(week, taskCountsByWeek.get(week) + 1);
+            }
+        }
+
+        return taskCountsByWeek;
+    }
+
+
+    public Map<String, Long> countTasksByMonth() {
+        Map<String, Long> taskCountsByMonth = new HashMap<>();
+
+        // Lấy danh sách tất cả task
+        List<TaskHistory> taskHistories = taskHistoryRepository.findAll();
+
+        // Vòng lặp qua từng task và đếm theo tháng
+        for (TaskHistory taskHistory : taskHistories) {
+            LocalDateTime start = taskHistory.getStart();
+            if (start != null) {
+                String month = start.format(DateTimeFormatter.ofPattern("MM-yyyy"));
+
+                // Kiểm tra xem tháng đã tồn tại trong map chưa, nếu chưa thì thêm vào
+                taskCountsByMonth.putIfAbsent(month, 0L);
+
+                // Tăng giá trị đếm của tháng đó lên 1
+                taskCountsByMonth.put(month, taskCountsByMonth.get(month) + 1);
+            }
+        }
+
+        return taskCountsByMonth;
+    }
+
 }

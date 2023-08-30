@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Statistics</title>
+  <!-- Thêm liên kết Bootstrap 5 CSS (nếu cần) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+  <h1 class="text-center">Task Statistics</h1>
+  <div class="mb-3">
+    <a class="btn btn-primary btn-sm" href="/task">Daily Task</a>
+    <a class="btn btn-primary btn-sm" href="/history">History</a>
+    <a class="btn btn-primary btn-sm" href="/history/stats">Stats</a>
+  </div>
+
+  <!-- Thống kê theo tuần -->
+  <h2 class="mt-4">Weekly Statistics</h2>
+  <table class="table table-bordered table-striped mt-3">
+    <thead>
+    <tr>
+      <th>Week</th>
+      <th>Tasks Count</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="entry : ${taskCountsByWeek}">
+      <td th:text="${entry.key}"></td>
+      <td th:text="${entry.value}"></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- Thống kê theo tháng -->
+  <h2 class="mt-4">Monthly Statistics</h2>
+  <table class="table table-bordered table-striped mt-3">
+    <thead>
+    <tr>
+      <th>Month</th>
+      <th>Tasks Count</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="entry : ${taskCountsByMonth}">
+      <td th:text="${entry.key}"></td>
+      <td th:text="${entry.value}"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Thêm liên kết Bootstrap 5 JavaScript và jQuery (nếu cần) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>

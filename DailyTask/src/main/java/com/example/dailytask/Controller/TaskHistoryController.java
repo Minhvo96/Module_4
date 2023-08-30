@@ -19,6 +19,7 @@ import org.springframework.web.servlet.View;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/history")
@@ -26,8 +27,6 @@ import java.util.List;
 public class TaskHistoryController {
     private final TaskHistoryService taskHistoryService;
     private final TaskService taskService;
-
-    private final TaskHistoryRepository taskHistoryRepository;
 
     @GetMapping("/search")
     public ModelAndView searchTasks(@RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -39,6 +38,29 @@ public class TaskHistoryController {
         view.addObject("statuses", TaskStatus.values());
         view.addObject("message", "Found " + tasks.size() + " tasks!");
         return view;
+    }
+    @GetMapping("/stats")
+    public ModelAndView taskStats() {
+        Map<TaskStatus, Long> taskCounts = taskHistoryService.countTasksByStatus();
+        ModelAndView modelAndView = new ModelAndView("task/stats");
+        modelAndView.addObject("taskCounts", taskCounts);
+        return modelAndView;
+    }
+
+    @GetMapping("/stats/week")
+    public ModelAndView taskStatsByWeek() {
+        Map<String, Long> taskCountsByWeek = taskHistoryService.countTasksByWeek();
+        ModelAndView modelAndView = new ModelAndView("task/statsweekmonth");
+        modelAndView.addObject("taskCountsByWeek", taskCountsByWeek);
+        return modelAndView;
+    }
+
+    @GetMapping("/stats/month")
+    public ModelAndView taskStatsByMonth() {
+        Map<String, Long> taskCountsByMonth = taskHistoryService.countTasksByMonth();
+        ModelAndView modelAndView = new ModelAndView("task/statsweekmonth");
+        modelAndView.addObject("taskCountsByMonth", taskCountsByMonth);
+        return modelAndView;
     }
 
 

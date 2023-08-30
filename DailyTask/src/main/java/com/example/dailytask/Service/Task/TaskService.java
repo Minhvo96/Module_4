@@ -7,6 +7,7 @@ import com.example.dailytask.Exception.ResourceNotFoundException;
 import com.example.dailytask.Exception.TaskNotFoundException;
 import com.example.dailytask.Repository.TaskHistoryRepository;
 import com.example.dailytask.Repository.TaskRepository;
+import com.example.dailytask.Service.Task.Request.TaskEditRequest;
 import com.example.dailytask.Service.Task.Request.TaskSaveRequest;
 import com.example.dailytask.Service.Task.Response.TaskListResponse;
 import com.example.dailytask.Util.AppMessage;
@@ -15,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -65,6 +67,35 @@ public class TaskService {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException
                         (String.format(AppMessage.ID_NOT_FOUND, "Task", id)));
+    }
+
+    public TaskEditRequest showEditById(Long id){
+        Task task = getTaskById(id);
+        return taskToTaskEditRequest(task);
+    }
+    public void edit(TaskEditRequest request, Long id) throws Exception{
+        var taskInDb = getTaskById(id);
+        taskInDb.setStart(AppUtil.mapper.map(request.getStart(), LocalTime.class));
+        taskInDb.setEnd(AppUtil.mapper.map(request.getEnd(), LocalTime.class));
+        taskInDb.setType(TaskType.valueOf(request.getType()));
+        taskInDb.setTitle(request.getTitle());
+        taskInDb.setDescription(request.getDescription());
+        request.setId(id.toString());
+        taskRepository.save(taskInDb);
+    }
+    private TaskEditRequest taskToTaskEditRequest(Task task){
+        var result = new TaskEditRequest();
+        result.setTitle(String.valueOf(task.getTitle()));
+        result.setDescription(String.valueOf(task.getDescription()));
+        result.setStart(String.valueOf(task.getStart()));
+        result.setEnd(String.valueOf(task.getEnd()));
+        result.setType(String.valueOf(task.getType()));
+        result.setId(String.valueOf(task.getId()));
+        return result;
+    }
+
+    public Task getTaskById(Long id) {
+        return taskRepository.findById(id).orElse(null);
     }
 
     public void deleteById(Long id) {
