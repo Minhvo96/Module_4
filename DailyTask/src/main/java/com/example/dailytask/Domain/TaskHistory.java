@@ -46,5 +46,6 @@ public class TaskHistory {
     @PrePersist
     public void setupBeforeInsert(){
         status = TaskStatus.TODO;
+        created = LocalDate.now();
     }
 }

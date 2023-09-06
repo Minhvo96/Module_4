@@ -45,50 +45,12 @@ public class TaskController {
         taskService.create(task);
         return "redirect:/task";
 }
-
-
-//    @GetMapping("/edit")
-//    public ModelAndView showEdit (@RequestParam Long id) {
-//        ModelAndView view = new ModelAndView("/task/edit");
-//        Task task = taskService.findByID(id);
-//        view.addObject("task", task);
-//        view.addObject("taskTypes", TaskType.values());
-//        view.addObject("taskStatuses", TaskStatus.values());
-//        return view;
-//    }
-//
-//    @PostMapping("/edit")
-//    public String editTask(@ModelAttribute Task task) {
-//        taskService.updateTask(task.getId(), task);
-//        return "redirect:/task";
-//    }
-
-//    @GetMapping("/delete")
-//    public ModelAndView showDelete(@RequestParam Long id){
-//        ModelAndView view = new ModelAndView("/task/delete");
-//        Task task = taskService.findByID(id);
-//        view.addObject("task", task);
-//        view.addObject("taskTypes", TaskType.values());
-//        view.addObject("taskStatuses", TaskStatus.values());
-//        return view;
-//    }
-
-//    @PostMapping("/delete")
-//    public String deleteTask(@ModelAttribute Task task){
-//        taskService.delete(task.getId());
-//        return "redirect:/task";
-//    }
-//    @GetMapping("delete/{id}")
-//    public String delete(@PathVariable Long id){
-//        taskService.deleteById(id);
-//        return "redirect:/task?message=Deleted";
-//    }
-@GetMapping("/edit")
-public ModelAndView showEdit(@RequestParam("id") Long id){
-    ModelAndView view = new ModelAndView("/task/editTask");
-    view.addObject("task", taskService.showEditById(id));
-    view.addObject("taskTypes", TaskType.values());
-    return view;
+    @GetMapping("/edit")
+    public ModelAndView showEdit(@RequestParam("id") Long id){
+        ModelAndView view = new ModelAndView("/task/editTask");
+        view.addObject("task", taskService.showEditById(id));
+        view.addObject("taskTypes", TaskType.values());
+        return view;
 }
     @PostMapping("/edit/{id}")
     public ModelAndView editTask(@ModelAttribute TaskEditRequest task, @PathVariable Long id){

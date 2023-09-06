@@ -2,6 +2,8 @@ package com.example.democustomvalidation.Domain;
 import com.example.democustomvalidation.Interface.StrongPassword;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -16,7 +18,7 @@ public class User {
     @NotEmpty
     private String username;
 
-    @StrongPassword
+    @StrongPassword(message = "aaaa")
     private String password;
 
 }

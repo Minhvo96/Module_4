@@ -12,4 +12,5 @@ import java.util.List;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByRenewalDate(LocalDate currentDate);
+    Task findTopByOrderByRenewalDateAsc();
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+
 public class UserController {
 
     @GetMapping("/register")
@@ -21,6 +22,7 @@ public class UserController {
     @PostMapping("/register")
     public ModelAndView registerUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
+
 
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("registration");

@@ -52,17 +52,12 @@ public class TaskHistoryController {
         Map<String, Long> taskCountsByWeek = taskHistoryService.countTasksByWeek();
         ModelAndView modelAndView = new ModelAndView("task/statsweekmonth");
         modelAndView.addObject("taskCountsByWeek", taskCountsByWeek);
-        return modelAndView;
-    }
 
-    @GetMapping("/stats/month")
-    public ModelAndView taskStatsByMonth() {
         Map<String, Long> taskCountsByMonth = taskHistoryService.countTasksByMonth();
-        ModelAndView modelAndView = new ModelAndView("task/statsweekmonth");
         modelAndView.addObject("taskCountsByMonth", taskCountsByMonth);
+
         return modelAndView;
     }
-
 
     @GetMapping
     public ModelAndView showHistoryTasks(@RequestParam(required = false) String message) {

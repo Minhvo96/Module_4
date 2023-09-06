@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -108,11 +109,16 @@ public class TaskHistoryService {
         // Lấy danh sách tất cả task
         List<TaskHistory> taskHistories = taskHistoryRepository.findAll();
 
-        // Vòng lặp qua từng task và đếm theo tuần
+        // Vòng lặp qua từng task và đếm theo tuần dựa trên ngày cụ thể
         for (TaskHistory taskHistory : taskHistories) {
             LocalDateTime start = taskHistory.getStart();
             if (start != null) {
-                String week = start.format(DateTimeFormatter.ofPattern("ww-yyyy"));
+                // Lấy ngày đầu và cuối của tuần từ ngày bắt đầu của task
+                LocalDateTime startOfWeek = start.with(DayOfWeek.MONDAY); // Ngày đầu tuần (thường là thứ 2)
+                LocalDateTime endOfWeek = startOfWeek.plusDays(6); // Ngày cuối tuần (thứ 7)
+
+                String week = startOfWeek.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " - " +
+                        endOfWeek.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
                 // Kiểm tra xem tuần đã tồn tại trong map chưa, nếu chưa thì thêm vào
                 taskCountsByWeek.putIfAbsent(week, 0L);
@@ -125,7 +131,6 @@ public class TaskHistoryService {
         return taskCountsByWeek;
     }
 
-
     public Map<String, Long> countTasksByMonth() {
         Map<String, Long> taskCountsByMonth = new HashMap<>();
 
@@ -135,18 +140,29 @@ public class TaskHistoryService {
         // Vòng lặp qua từng task và đếm theo tháng
         for (TaskHistory taskHistory : taskHistories) {
             LocalDateTime start = taskHistory.getStart();
-            if (start != null) {
-                String month = start.format(DateTimeFormatter.ofPattern("MM-yyyy"));
+            LocalDateTime end = taskHistory.getEnd();
 
-                // Kiểm tra xem tháng đã tồn tại trong map chưa, nếu chưa thì thêm vào
-                taskCountsByMonth.putIfAbsent(month, 0L);
+            if (start != null && end != null) {
+                // Lấy tháng và năm bắt đầu và kết thúc
+                String startMonthYear = start.format(DateTimeFormatter.ofPattern("MM-yyyy"));
+                String endMonthYear = end.format(DateTimeFormatter.ofPattern("MM-yyyy"));
 
-                // Tăng giá trị đếm của tháng đó lên 1
-                taskCountsByMonth.put(month, taskCountsByMonth.get(month) + 1);
+                // Kiểm tra xem task có bắt đầu hoặc kết thúc trong tháng
+                for (LocalDateTime date = start; date.isBefore(end) || date.equals(end); date = date.plusMonths(1)) {
+                    String month = date.format(DateTimeFormatter.ofPattern("MM-yyyy"));
+
+                    // Kiểm tra xem tháng đã tồn tại trong map chưa, nếu chưa thì thêm vào
+                    taskCountsByMonth.putIfAbsent(month, 0L);
+
+                    // Tăng giá trị đếm của tháng đó lên 1
+                    taskCountsByMonth.put(month, taskCountsByMonth.get(month) + 1);
+                }
             }
         }
 
         return taskCountsByMonth;
     }
+
+
 
 }
