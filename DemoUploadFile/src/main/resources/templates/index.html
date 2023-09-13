@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Upload and Display</title>
+</head>
+<body>
+<h1>Upload and Display Image</h1>
+
+<!-- Form để tải lên ảnh -->
+<form id="uploadForm" enctype="multipart/form-data">
+  <input type="file" name="file" id="fileInput" accept="image/*">
+  <button type="submit">Upload Image</button>
+</form>
+
+<!-- Phần hiển thị ảnh -->
+<div id="imageDisplay">
+  <h2>Uploaded Image</h2>
+  <img id="uploadedImage" src="" alt="Uploaded Image">
+</div>
+
+<script>
+  document.getElementById('uploadForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const formData = new FormData();
+    const fileInput = document.getElementById('fileInput').files[0];
+    formData.append('file', fileInput);
+
+    fetch('/api/upload', {
+      method: 'POST',
+      body: formData
+    })
+            .then(response => response.blob()) // Chuyển đổi kết quả thành dạng blob
+            .then(data => {
+              // Hiển thị ảnh sau khi tải lên
+              const imageUrl = URL.createObjectURL(data);
+              const uploadedImage = document.getElementById('uploadedImage');
+              uploadedImage.src = imageUrl;
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+  });
+</script>
+</body>
+</html>
